@@ -6,10 +6,11 @@
 
 class Button: public Component {
   private:
-    Point* topLeft;
-    Point* bottomRight;
+    Point topLeft;
+    Point bottomRight;
 
   public:
+    Button();
     Button(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY);
     virtual void paint(Elegoo_TFTLCD* tft);
 };

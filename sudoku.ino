@@ -30,7 +30,7 @@ void setup(void) {
 
   tft.fillScreen(BLACK);
 
-  Button b1(10, 10, 200, 200);
+  Button b1(10, 10, 200, 40);
   b1.paint(&tft);
 }
 
