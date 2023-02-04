@@ -1,15 +1,17 @@
 #ifndef BUTTON_h
 #define BUTTON_h
 
-#include "Point.h"
+#include "point.h"
+#include "component.h"
 
-class Button {
+class Button: public Component {
   private:
-    Point topLeft;
-    Point bottomRight;
+    Point* topLeft;
+    Point* bottomRight;
 
   public:
-    Button(Point _topLeft, Point _bottomRight);
+    Button(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY);
+    virtual void paint(Elegoo_TFTLCD* tft);
 };
 
 #endif
