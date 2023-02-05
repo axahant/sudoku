@@ -10,9 +10,6 @@ void Component::addChild(Component *child) {
 }
 
 void Component::paintChildren(Elegoo_TFTLCD* tft) {
-  Serial.println("Component paint called");
-  Serial.print("has children: ");
-  Serial.println(childCount);
   for(int n = 0; n < childCount; n++) {
     children[n]->paint(tft);  
   }
