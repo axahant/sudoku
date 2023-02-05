@@ -12,7 +12,7 @@ class Button: public Component {
   public:
     Button();
     Button(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY);
-    virtual void paint(Elegoo_TFTLCD* tft);
+    void paint(Elegoo_TFTLCD* tft);
 };
 
 #endif

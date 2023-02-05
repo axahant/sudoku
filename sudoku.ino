@@ -31,6 +31,10 @@ void setup(void) {
   tft.fillScreen(BLACK);
 
   Button b1(10, 10, 200, 40);
+  Button b2(10, 110, 300, 140);
+
+  b1.addChild(&b2);
+
   b1.paint(&tft);
 }
 
