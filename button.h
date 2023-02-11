@@ -12,6 +12,7 @@ class Button: public Component {
   public:
     Button();
     Button(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY);
+    void setBounds(Rectangle rectangle);
     void paint(Elegoo_TFTLCD* tft);
 };
 

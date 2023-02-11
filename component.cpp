@@ -14,3 +14,11 @@ void Component::paintChildren(Elegoo_TFTLCD* tft) {
     children[n]->paint(tft);  
   }
 }
+
+int Component::getChildCount() {
+  return childCount;
+}
+
+Component** Component::getChildren() {
+  return children;
+}

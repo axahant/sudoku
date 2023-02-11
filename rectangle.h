@@ -2,7 +2,6 @@
 #define RECTANGLE_h
 
 #include "point.h"
-#include "component.h"
 
 class Rectangle {
   private:

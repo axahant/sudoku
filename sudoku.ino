@@ -7,6 +7,7 @@
 #include "button.h"
 #include "colors.h"
 #include "component.h"
+#include "grid_layout.h"
 
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
@@ -20,12 +21,20 @@ void setup(void) {
 
   tft.fillScreen(BLACK);
 
-  Button b1(10, 10, 200, 40);
-  Button b2(10, 110, 300, 140);
+  Button parent;
+  Button b1;
+  Button b2;
+  
+  parent.addChild(&b1);
+  parent.addChild(&b2);
+  Serial.println(tft.width());
+  Serial.println(tft.height());
 
-  b1.addChild(&b2);
+  Rectangle tftRectangle(0, 0, tft.width() - 1, tft.height() - 1);
+  GridLayout layout(tftRectangle, 6, 6);
+  layout.layout(&parent);
 
-  b1.paint(&tft);
+  parent.paintChildren(&tft);
 }
 
 

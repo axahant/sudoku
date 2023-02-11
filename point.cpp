@@ -27,3 +27,11 @@ void Point::setX(int _x) {
 void Point::setY(int _y) {
   y = _y;
 }
+
+void Point::print() {
+  Serial.print("(");
+  Serial.print(x);
+  Serial.print(",");
+  Serial.print(y);
+  Serial.println(")");
+}
