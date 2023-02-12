@@ -15,6 +15,10 @@ class Rectangle {
     Point getBottomRight();
     void setTopLeft(int topLeftX, int topLeftY);
     void setBottomRight(int bottomRightX, int bottomRightY);
+    int getWidth();
+    int getHeight();
+    void print();
+    void println();
 };
 
 #endif

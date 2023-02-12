@@ -28,3 +28,22 @@ void Rectangle::setBottomRight(int bottomRightX, int bottomRightY) {
   bottomRight.setX(bottomRightX);
   bottomRight.setY(bottomRightY);
 }
+
+int Rectangle::getWidth() {
+  return bottomRight.getX() - topLeft.getX();
+}
+
+int Rectangle::getHeight() {
+  return bottomRight.getY() - topLeft.getY(); 
+}
+
+void Rectangle::print() {
+  topLeft.print();
+  Serial.print(" - ");
+  bottomRight.print();
+}
+
+void Rectangle::println() {
+  print();
+  Serial.println();
+}

@@ -9,9 +9,11 @@ class GridLayout: public Layout {
   private:
     int row;
     int col;
+    int rowPadding;
+    int colPadding;
     Rectangle rectangle;
   public:
-    GridLayout(Rectangle rectangle, int _row, int _col);
+    GridLayout(Rectangle rectangle, int _row, int _col, int _rowPadding = 0, int _colPadding = 0);
     void layout(Component *_component);
 };
 

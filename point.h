@@ -16,6 +16,7 @@ class Point {
     void setX(int _x);
     void setY(int _y);
     void print();
+    void println();
 };
 
 #endif

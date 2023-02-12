@@ -33,5 +33,10 @@ void Point::print() {
   Serial.print(x);
   Serial.print(",");
   Serial.print(y);
-  Serial.println(")");
+  Serial.print(")");
+}
+
+void Point::println() {
+  print();
+  Serial.println();
 }

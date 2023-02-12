@@ -22,8 +22,6 @@ void Button::setBounds(Rectangle rectangle) {
 }
 
 void Button::paint(Elegoo_TFTLCD* tft) {
-  topLeft.print();
-  bottomRight.print();
   tft->fillRoundRect(topLeft.getX(), topLeft.getY(), bottomRight.getX() - topLeft.getX(), bottomRight.getY() - topLeft.getY(), 5, CYAN);
   tft->drawRoundRect(topLeft.getX(), topLeft.getY(), bottomRight.getX() - topLeft.getX(), bottomRight.getY() - topLeft.getY(), 5, WHITE);
   paintChildren(tft);

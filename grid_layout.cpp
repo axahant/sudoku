@@ -2,9 +2,11 @@
 #include "rectangle.h"
 #include "grid_layout.h"
 
-GridLayout::GridLayout(Rectangle _rectangle, int _row, int _col) {
+GridLayout::GridLayout(Rectangle _rectangle, int _row, int _col, int _rowPadding, int _colPadding) {
   row = _row;
   col = _col;
+  rowPadding = _rowPadding;
+  colPadding = _colPadding;
   rectangle = _rectangle;
 }
 
@@ -25,12 +27,13 @@ void GridLayout::layout(Component *_component) {
         int topLeftX = rectangle.getTopLeft().getX() + (j * cellWidth);
         int topLeftY = rectangle.getTopLeft().getY() + (i * cellHeight);
         int bottomRightX = topLeftX + cellWidth; 
-        int bottomRightY = topLeftY + cellHeight; 
+        int bottomRightY = topLeftY + cellHeight;
+        topLeftX = topLeftX + colPadding;
+        topLeftY = topLeftY + rowPadding;
+        bottomRightX = bottomRightX - colPadding;
+        bottomRightY = bottomRightY - rowPadding;
 
         Rectangle bounds(topLeftX, topLeftY, bottomRightX, bottomRightY);
-
-        // bounds.getTopLeft().print();
-        // bounds.getBottomRight().print();
 
         children[componentIndex]->setBounds(bounds);
       }
