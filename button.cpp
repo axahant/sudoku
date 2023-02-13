@@ -1,28 +1,37 @@
 #include "point.h"
+#include "label.h"
 #include "colors.h"
 #include "button.h"
 
 #include <Elegoo_TFTLCD.h>
 
 Button::Button() {
+  addChild(&label);
+} 
+
+Button::Button(String _label, int size) {
+  label.setText(_label);
+  label.setSize(size);
+  addChild(&label);
 }
 
-Button::Button(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
-  topLeft.setX(topLeftX);
-  topLeft.setY(topLeftY);
-  bottomRight.setX(bottomRightX);
-  bottomRight.setY(bottomRightY);
+Button::Button(String _label, int size, int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+  label.setText(_label);
+  label.setSize(size);
+  addChild(&label);
+  bounds.setTopLeft(topLeftX, topLeftY);
+  bounds.setBottomRight(bottomRightX, bottomRightY);
 }
 
 void Button::setBounds(Rectangle rectangle) {
-  topLeft.setX(rectangle.getTopLeft().getX());
-  topLeft.setY(rectangle.getTopLeft().getY());
-  bottomRight.setX(rectangle.getBottomRight().getX());
-  bottomRight.setY(rectangle.getBottomRight().getY());
+  bounds.setTopLeft(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY());
+  bounds.setBottomRight(rectangle.getBottomRight().getX(), rectangle.getBottomRight().getY());
+  rectangle.println();
+  label.setBounds(rectangle);
 }
 
 void Button::paint(Elegoo_TFTLCD* tft) {
-  tft->fillRoundRect(topLeft.getX(), topLeft.getY(), bottomRight.getX() - topLeft.getX(), bottomRight.getY() - topLeft.getY(), 5, CYAN);
-  tft->drawRoundRect(topLeft.getX(), topLeft.getY(), bottomRight.getX() - topLeft.getX(), bottomRight.getY() - topLeft.getY(), 5, WHITE);
+  tft->fillRoundRect(bounds.getTopLeft().getX(), bounds.getTopLeft().getY(), bounds.getWidth(), bounds.getHeight(), 5, CYAN);
+  tft->drawRoundRect(bounds.getTopLeft().getX(), bounds.getTopLeft().getY(), bounds.getWidth(), bounds.getHeight(), 5, WHITE);
   paintChildren(tft);
 }

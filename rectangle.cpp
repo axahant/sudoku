@@ -7,7 +7,7 @@ Rectangle::Rectangle() {
 Rectangle::Rectangle(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
   topLeft.setX(topLeftX);
   topLeft.setY(topLeftY);
-  bottomRight.setX(bottomRightX);
+  bottomRight.setX(bottomRightX); 
   bottomRight.setY(bottomRightY);
 }
 

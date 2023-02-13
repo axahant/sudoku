@@ -10,7 +10,10 @@ class Label: public Component {
     int size; 
     Rectangle bounds;
   public:
+    Label();
     Label(String _text, int _size = 1);
+    void setText(String _text);
+    void setSize(int _size);
     void setBounds(Rectangle rectangle);
     void paint(Elegoo_TFTLCD* tft);
 };

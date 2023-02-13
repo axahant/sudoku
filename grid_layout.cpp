@@ -14,8 +14,8 @@ void GridLayout::layout(Component *_component) {
   int childCount = _component->getChildCount();
   Component **children = _component->getChildren();
 
-  int width = rectangle.getBottomRight().getX() - rectangle.getTopLeft().getX();
-  int height = rectangle.getBottomRight().getY() - rectangle.getTopLeft().getY();
+  int width = rectangle.getWidth();
+  int height = rectangle.getHeight();
   int cellWidth = width / col;
   int cellHeight = height / row;
 
@@ -23,6 +23,8 @@ void GridLayout::layout(Component *_component) {
     for (int j=0; j < col; j++) {
       int componentIndex = (i * col) + j;
 
+      Serial.print("Child count: ");
+      Serial.println(childCount);
       if (componentIndex < childCount) {
         int topLeftX = rectangle.getTopLeft().getX() + (j * cellWidth);
         int topLeftY = rectangle.getTopLeft().getY() + (i * cellHeight);
@@ -34,6 +36,9 @@ void GridLayout::layout(Component *_component) {
         bottomRightY = bottomRightY - rowPadding;
 
         Rectangle bounds(topLeftX, topLeftY, bottomRightX, bottomRightY);
+
+        Serial.println(componentIndex);
+        bounds.println();
 
         children[componentIndex]->setBounds(bounds);
       }

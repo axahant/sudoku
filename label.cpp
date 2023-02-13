@@ -4,14 +4,27 @@
 
 #include <Elegoo_TFTLCD.h>
 
+Label::Label() {
+  text = "";
+  size = 1;
+}
+
 Label::Label(String _text, int _size) {
   text = _text;
   size = _size;
 }
 
+void Label::setText(String _text) {
+  text = _text;
+}
+
+void Label::setSize(int _size) {
+  size = _size;
+}
+
 void Label::setBounds(Rectangle rectangle) {
-  rectangle.println();
-  bounds = rectangle;
+  bounds.setTopLeft(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY());
+  bounds.setBottomRight(rectangle.getBottomRight().getX(), rectangle.getBottomRight().getY());
 }
 
 void Label::paint(Elegoo_TFTLCD* tft) {
