@@ -11,9 +11,14 @@ class GridLayout: public Layout {
     int col;
     int rowPadding;
     int colPadding;
-    Rectangle rectangle;
+    Rectangle bounds;
   public:
-    GridLayout(Rectangle rectangle, int _row, int _col, int _rowPadding = 0, int _colPadding = 0);
+    GridLayout();
+    GridLayout(Rectangle _rectangle, int _row = 1, int _col = 1, int _rowPadding = 0, int _colPadding = 0);
+    Rectangle getBounds();
+    void setBounds(Rectangle _rectangle);
+    void setRow(int _row);
+    void setCol(int _col);
     void layout(Component *_component);
 };
 

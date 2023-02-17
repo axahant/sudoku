@@ -5,13 +5,14 @@
 #include <Elegoo_TFTLCD.h>
 
 Label::Label() {
-  text = "";
   size = 1;
+  color = WHITE;
 }
 
-Label::Label(String _text, int _size) {
+Label::Label(String _text, int _size, int _color) {
   text = _text;
   size = _size;
+  color = _color;
 }
 
 void Label::setText(String _text) {
@@ -20,6 +21,14 @@ void Label::setText(String _text) {
 
 void Label::setSize(int _size) {
   size = _size;
+}
+
+void Label::setColor(int _color) {
+  color = _color;
+}
+
+Rectangle Label::getBounds() {
+  return bounds; 
 }
 
 void Label::setBounds(Rectangle rectangle) {
@@ -36,7 +45,7 @@ void Label::paint(Elegoo_TFTLCD* tft) {
   int th = charPixelHeight;
   int y = bounds.getTopLeft().getY() + (bounds.getHeight() - th)/2;
   tft->setCursor(x,y); 
-  tft->setTextColor(WHITE);
+  tft->setTextColor(color);
   tft->setTextSize(size);
   tft->print(text);
   paintChildren(tft);

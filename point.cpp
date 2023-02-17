@@ -1,4 +1,5 @@
 #include "point.h"
+#include "grid_layout.h"
 
 Point::Point() {
   x = 0;

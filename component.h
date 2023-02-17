@@ -10,6 +10,7 @@ class Component {
     Component *children[16];
   public:
     Component();
+    virtual Rectangle getBounds();
     virtual void setBounds(Rectangle rectangle);
     virtual void paint(Elegoo_TFTLCD* tft);
     void paintChildren(Elegoo_TFTLCD* tft);

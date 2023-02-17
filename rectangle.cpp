@@ -37,6 +37,13 @@ int Rectangle::getHeight() {
   return bottomRight.getY() - topLeft.getY(); 
 }
 
+void Rectangle::copy(Rectangle _rectangle) {
+  topLeft.setX(_rectangle.getTopLeft().getX());
+  topLeft.setY(_rectangle.getTopLeft().getY());
+  bottomRight.setX(_rectangle.getBottomRight().getX());
+  bottomRight.setY(_rectangle.getBottomRight().getY());
+}
+
 void Rectangle::print() {
   topLeft.print();
   Serial.print(" - ");

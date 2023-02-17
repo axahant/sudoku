@@ -13,6 +13,7 @@ class Button: public Component {
     Button();
     Button(String _label, int size = 1);
     Button(String _label, int size, int topLeftX, int topLeftY, int bottomRightX, int bottomRightY);
+    Rectangle getBounds();
     void setBounds(Rectangle rectangle);
     void paint(Elegoo_TFTLCD* tft);
 };

@@ -17,6 +17,7 @@ class Rectangle {
     void setBottomRight(int bottomRightX, int bottomRightY);
     int getWidth();
     int getHeight();
+    void copy(Rectangle _rectangle);
     void print();
     void println();
 };
