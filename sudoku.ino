@@ -7,8 +7,8 @@
 #include "welcome_screen.h"
 #include "options_screen.h"
 
-TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
-Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
+TouchScreen *ts;
+Elegoo_TFTLCD *tft;
 
 WelcomeScreen* wScreen;
 OptionsScreen* oScreen;
@@ -18,18 +18,20 @@ int i = 0;
 
 void setup(void) {
   Serial.begin(9600);
-  tft.reset();
+  ts = new TouchScreen(XP, YP, XM, YM, 300);
+  tft = new Elegoo_TFTLCD(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
+
+  tft->reset();
   
-  uint16_t identifier = 0x9341;
-  tft.begin(identifier);
-  tft.setRotation(3);
+  tft->begin(0x9341);
+  tft->setRotation(3);
 
   wScreen = new WelcomeScreen();
-  wScreen->init(&tft);
+  wScreen->init(tft);
   wScreen->addListener(&switchToOptionsScreen);
 
   oScreen = new OptionsScreen();
-  oScreen->init(&tft);
+  oScreen->init(tft);
   oScreen->addListener(&switchToWelcomeScreen);
 
   screen = wScreen;
@@ -49,12 +51,12 @@ void switchToOptionsScreen(int x, int y) {
 }
 
 void loop() {
-  screen->paint(&tft);
+  screen->paint(tft);
   delay(250);
   i++;
 
-  // TSPoint touchPoint = ts.getPoint();
-  // if (touchPoint.z > ts.pressureThreshhold) {
+  // TSPoint touchPoint = ts->getPoint();
+  // if (touchPoint.z > ts->pressureThreshhold) {
   //   Serial.println("Touched");
   // }
 
