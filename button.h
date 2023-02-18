@@ -7,15 +7,47 @@
 
 class Button: public Component {
   private:
+
     Rectangle bounds;
     Label label;
+
   public:
-    Button();
-    Button(String _label, int size = 1);
-    Button(String _label, int size, int topLeftX, int topLeftY, int bottomRightX, int bottomRightY);
-    Rectangle getBounds();
-    void setBounds(Rectangle rectangle);
-    void paint(Elegoo_TFTLCD* tft);
+
+    Button() {
+      addChild(&label);
+    } 
+
+    Button(String _label, int size = 1) {
+      label.setText(_label);
+      label.setSize(size);
+      addChild(&label);
+    }
+
+    Button(String _label, int size, int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+      label.setText(_label);
+      label.setSize(size);
+      addChild(&label);
+      bounds.setTopLeft(topLeftX, topLeftY);
+      bounds.setBottomRight(bottomRightX, bottomRightY);
+    }
+
+    virtual Rectangle getBounds() {
+      return bounds; 
+    }
+
+    virtual void setBounds(Rectangle rectangle) {
+      bounds.setTopLeft(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY());
+      bounds.setBottomRight(rectangle.getBottomRight().getX(), rectangle.getBottomRight().getY());
+      rectangle.println();
+      label.setBounds(rectangle);
+    }
+
+    virtual void paint(Elegoo_TFTLCD* tft) {
+      tft->fillRoundRect(bounds.getTopLeft().getX(), bounds.getTopLeft().getY(), bounds.getWidth(), bounds.getHeight(), 5, CYAN);
+      tft->drawRoundRect(bounds.getTopLeft().getX(), bounds.getTopLeft().getY(), bounds.getWidth(), bounds.getHeight(), 5, WHITE);
+      paintChildren(tft);
+    }
+
 };
 
 #endif

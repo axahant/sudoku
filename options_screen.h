@@ -1,12 +1,12 @@
-#ifndef WELCOME_SCREEN_h
-#define WECOME_SCREEN_h
+#ifndef OPTIONS_SCREEN_h
+#define OPTIONS_SCREEN_h
 
 #include "label.h"
 #include "panel.h"
 
 #include <Elegoo_TFTLCD.h>
 
-class WelcomeScreen: public Panel {
+class OptionsScreen: public Panel {
   private:
 
     Panel topPanel;
@@ -19,7 +19,7 @@ class WelcomeScreen: public Panel {
 
   public:
 
-    WelcomeScreen() {
+    OptionsScreen() {
       setRow(2);
       setColor(BLUE);
       addChild(&topPanel);
@@ -30,7 +30,7 @@ class WelcomeScreen: public Panel {
       bottomPanel.setCol(1);
       addChild(&bottomPanel);
 
-      welcomeLabel.setText("Welcome");
+      welcomeLabel.setText("Options");
       welcomeLabel.setSize(5);
       welcomeLabel.setColor(YELLOW);
       topPanel.addChild(&welcomeLabel);

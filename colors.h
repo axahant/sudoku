@@ -1,3 +1,6 @@
+#ifndef COLORS_h
+#define COLORS_h
+
 #define BLACK       0x0000
 #define NAVY        0x000F
 #define DARKGREEN   0x03E0
@@ -17,3 +20,5 @@
 #define ORANGE      0xFD20
 #define GREENYELLOW 0xAFE5
 #define PINK        0xF81F
+
+#endif

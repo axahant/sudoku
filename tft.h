@@ -1,6 +1,9 @@
-#define YP A3  
-#define XM A2  
-#define YM 9   
+#ifndef TFT_h
+#define TFT_h
+
+#define YP A3
+#define XM A2
+#define YM 9
 #define XP 8
 #define LCD_CS A3
 #define LCD_CD A2
@@ -8,4 +11,4 @@
 #define LCD_RD A0
 #define LCD_RESET A4
 
-
+#endif

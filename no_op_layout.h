@@ -6,8 +6,13 @@
 
 class NoOpLayout: public Layout {
   public:
-  NoOpLayout();
-  void layout(Component *_component);
+
+    NoOpLayout() {
+    }
+
+    virtual void layout(Component *_component) {
+    }
+
 };
 
 #endif

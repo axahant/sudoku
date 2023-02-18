@@ -5,7 +5,7 @@
 
 class Layout {
   public:
-  virtual void layout(Component *component);
+    virtual void layout(Component *component);
 };
 
 #endif
