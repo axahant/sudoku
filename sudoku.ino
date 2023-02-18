@@ -26,28 +26,46 @@ void setup(void) {
 
   wScreen = new WelcomeScreen();
   wScreen->init(&tft);
+  wScreen->addListener(&switchToOptionsScreen);
 
   oScreen = new OptionsScreen();
   oScreen->init(&tft);
+  oScreen->addListener(&switchToWelcomeScreen);
 
   screen = wScreen;
 }
 
+void switchTo(Panel *panel) {
+  screen = panel;
+  screen->setDirty();
+}
+
+void switchToWelcomeScreen(int x, int y) {
+  switchTo(wScreen);
+}
+
+void switchToOptionsScreen(int x, int y) {
+  switchTo(oScreen);
+}
+
 void loop() {
+  screen->paint(&tft);
+  delay(250);
   i++;
 
-  if (i%5 == 0) {
+  // TSPoint touchPoint = ts.getPoint();
+  // if (touchPoint.z > ts.pressureThreshhold) {
+  //   Serial.println("Touched");
+  // }
+
+  if (i%10 == 0) {
     if (screen == wScreen) {
       Serial.println("Switch: op");
-      screen = oScreen;
+      switchToOptionsScreen(0, 0);
     } else {
       Serial.println("Switch: wel");
-      screen = wScreen;
+      switchToWelcomeScreen(0, 0);
     }
-    screen->setDirty();
     i = 0;
   }
-
-  delay(300);
-  screen->paint(&tft);
 }

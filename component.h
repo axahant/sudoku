@@ -4,8 +4,9 @@
 #include <Elegoo_TFTLCD.h>
 
 #include "rectangle.h"
+#include "touch_listener.h"
 
-class Component {
+class Component: public TouchListener {
   private:
 
     int childCount;
