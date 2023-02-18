@@ -3,10 +3,12 @@
 
 #include "label.h"
 #include "panel.h"
+#include "colors.h"
+#include "full_screen_panel.h"
 
 #include <Elegoo_TFTLCD.h>
 
-class WelcomeScreen: public Panel {
+class WelcomeScreen: public FullScreenPanel {
   private:
 
     Panel topPanel;
@@ -49,11 +51,6 @@ class WelcomeScreen: public Panel {
       myYearLabel.setSize(2);
       myYearLabel.setColor(GREEN);
       bottomPanel.addChild(&myYearLabel);
-    }
-
-    void init(Elegoo_TFTLCD *tft) {
-      Rectangle tftRectangle(0, 0, tft->width() - 1, tft->height() - 1);
-      setBounds(tftRectangle);
     }
 
 };
