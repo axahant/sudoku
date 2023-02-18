@@ -12,6 +12,22 @@ class Label: public Component {
     Rectangle bounds;
     int color;
 
+  protected:
+
+    virtual void paintComponent(Elegoo_TFTLCD* tft) {
+      int charPixelWidth = 6 * size;
+      int charPixelHeight = 7 * size;
+
+      int tw = charPixelWidth * text.length();
+      int x = bounds.getTopLeft().getX() + (bounds.getWidth() - tw)/2;
+      int th = charPixelHeight;
+      int y = bounds.getTopLeft().getY() + (bounds.getHeight() - th)/2;
+      tft->setCursor(x,y); 
+      tft->setTextColor(color);
+      tft->setTextSize(size);
+      tft->print(text);
+    }
+
   public:
 
     Label() {
@@ -27,14 +43,17 @@ class Label: public Component {
 
     void setText(String _text) {
       text = _text;
+      setDirty();
     }
 
     void setSize(int _size) {
       size = _size;
+      setDirty();
     }
 
     void setColor(int _color) {
       color = _color;
+      setDirty();
     }
 
     virtual Rectangle getBounds() {
@@ -44,21 +63,7 @@ class Label: public Component {
     virtual void setBounds(Rectangle rectangle) {
       bounds.setTopLeft(rectangle.getTopLeft().getX(), rectangle.getTopLeft().getY());
       bounds.setBottomRight(rectangle.getBottomRight().getX(), rectangle.getBottomRight().getY());
-    }
-
-    virtual void paint(Elegoo_TFTLCD* tft) {
-      int charPixelWidth = 6 * size;
-      int charPixelHeight = 7 * size;
-
-      int tw = charPixelWidth * text.length();
-      int x = bounds.getTopLeft().getX() + (bounds.getWidth() - tw)/2;
-      int th = charPixelHeight;
-      int y = bounds.getTopLeft().getY() + (bounds.getHeight() - th)/2;
-      tft->setCursor(x,y); 
-      tft->setTextColor(color);
-      tft->setTextSize(size);
-      tft->print(text);
-      paintChildren(tft);
+      setDirty();
     }
 
 };

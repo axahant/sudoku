@@ -11,6 +11,13 @@ class Button: public Component {
     Rectangle bounds;
     Label label;
 
+  protected:
+
+    virtual void paintComponent(Elegoo_TFTLCD* tft) {
+      tft->fillRoundRect(bounds.getTopLeft().getX(), bounds.getTopLeft().getY(), bounds.getWidth(), bounds.getHeight(), 5, CYAN);
+      tft->drawRoundRect(bounds.getTopLeft().getX(), bounds.getTopLeft().getY(), bounds.getWidth(), bounds.getHeight(), 5, WHITE);
+    }
+
   public:
 
     Button() {
@@ -40,12 +47,6 @@ class Button: public Component {
       bounds.setBottomRight(rectangle.getBottomRight().getX(), rectangle.getBottomRight().getY());
       rectangle.println();
       label.setBounds(rectangle);
-    }
-
-    virtual void paint(Elegoo_TFTLCD* tft) {
-      tft->fillRoundRect(bounds.getTopLeft().getX(), bounds.getTopLeft().getY(), bounds.getWidth(), bounds.getHeight(), 5, CYAN);
-      tft->drawRoundRect(bounds.getTopLeft().getX(), bounds.getTopLeft().getY(), bounds.getWidth(), bounds.getHeight(), 5, WHITE);
-      paintChildren(tft);
     }
 
 };

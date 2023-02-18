@@ -11,6 +11,15 @@ class Panel: public Component {
     int color;
     GridLayout layout;
 
+  protected:
+
+    virtual void paintComponent(Elegoo_TFTLCD* tft) {
+      if (color >= 0) {
+        tft->fillRect(layout.getBounds().getTopLeft().getX(), layout.getBounds().getTopLeft().getY(), layout.getBounds().getWidth(), layout.getBounds().getHeight(), color);
+      }
+    }
+
+
   public:
 
     Panel() {
@@ -42,13 +51,6 @@ class Panel: public Component {
     virtual void setBounds(Rectangle rectangle) {
       layout.setBounds(rectangle);
       layout.layout(this);
-    }
-
-    virtual void paint(Elegoo_TFTLCD* tft) {
-      if (color >= 0) {
-        tft->fillRect(layout.getBounds().getTopLeft().getX(), layout.getBounds().getTopLeft().getY(), layout.getBounds().getWidth(), layout.getBounds().getHeight(), color);
-      }
-      paintChildren(tft);
     }
 
 };

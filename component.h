@@ -11,9 +11,14 @@ class Component {
     int childCount;
     Component *children[16];
 
+  protected:
+    bool dirty;
+    virtual void paintComponent(Elegoo_TFTLCD* tft);
+
   public:
 
     Component() {
+      dirty = true;
       childCount = 0;
     }
 
@@ -32,13 +37,33 @@ class Component {
 
     void paintChildren(Elegoo_TFTLCD* tft) {
       for(int n = 0; n < childCount; n++) {
-        children[n]->paint(tft);  
+        if (children[n]->getDirty()) {
+          children[n]->paint(tft);
+        }
       }
+    }
+
+    bool getDirty() {
+      return dirty;
+    }
+
+    void setDirty() {
+      dirty = true;
+      for (int n = 0; n < childCount; n++) {
+        children[n]->setDirty();
+      }
+    }
+
+    void paint(Elegoo_TFTLCD* tft) {
+      if (dirty) {
+        dirty = false;
+        paintComponent(tft);
+      }
+      paintChildren(tft);
     }
 
     virtual Rectangle getBounds();
     virtual void setBounds(Rectangle rectangle);
-    virtual void paint(Elegoo_TFTLCD* tft);
 
 };
 

@@ -3,6 +3,7 @@
 
 #include "label.h"
 #include "panel.h"
+#include "colors.h"
 
 #include <Elegoo_TFTLCD.h>
 
@@ -21,7 +22,7 @@ class OptionsScreen: public Panel {
 
     OptionsScreen() {
       setRow(2);
-      setColor(BLUE);
+      setColor(BLACK);
       addChild(&topPanel);
 
       topPanel.setRow(2);

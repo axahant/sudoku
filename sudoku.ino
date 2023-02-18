@@ -10,8 +10,8 @@
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
-WelcomeScreen wScreen;
-OptionsScreen oScreen;
+WelcomeScreen* wScreen;
+OptionsScreen* oScreen;
 Panel *screen;
 
 int i = 0;
@@ -24,23 +24,30 @@ void setup(void) {
   tft.begin(identifier);
   tft.setRotation(3);
 
-  wScreen.init(&tft);
-  oScreen.init(&tft);
+  wScreen = new WelcomeScreen();
+  wScreen->init(&tft);
 
-  screen = &wScreen;
+  oScreen = new OptionsScreen();
+  oScreen->init(&tft);
+
+  screen = wScreen;
 }
 
 void loop() {
   i++;
 
   if (i%5 == 0) {
-    if (screen == &wScreen) {
-      screen = &oScreen;
+    if (screen == wScreen) {
+      Serial.println("Switch: op");
+      screen = oScreen;
     } else {
-      screen = &wScreen;
+      Serial.println("Switch: wel");
+      screen = wScreen;
     }
+    screen->setDirty();
     i = 0;
   }
 
+  delay(300);
   screen->paint(&tft);
 }
