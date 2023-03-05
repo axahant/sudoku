@@ -75,21 +75,6 @@ void emptySudoku() {
   }
 }
 
-void randomValues(byte *values) {
-  randomSeed(analogRead(A15));
-  for (byte n = 0; n < 9; n++) {
-    values[n] = random(8) + 1;
-    bool exists = false;
-    for (byte i = 0; i < n; i++) {
-      exists = exists & (values[i] == rand);
-    }
-    if (exists) {
-      n--;
-    }
-  }
-  return values;
-}
-
 void initSudoku() {
   emptySudoku();
 }
@@ -157,62 +142,6 @@ byte toArrayIndex(byte gX, byte gY, byte x, byte y) {
   return arrayIndex;
 }
 
-bool isGridValid(byte gX, byte gY) {
-  bool valid = true;
-  byte counts[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-  for (byte x = 0; x < 3 && valid; x++) {
-    for (byte y = 0; y < 3 && valid; y++) {
-      int value = sudoku[toArrayIndex(gX, gY, x, y)].value;
-      if (value > 0) {
-        counts[value - 1]++;
-      }
-      valid = isCellValid(gX, gY, x, y);
-    }
-  }
-  Serial.print("Cell Valid: ");
-  Serial.println(valid);
-
-  for (byte i = 0; i < 9 && valid; i++) {
-    valid = counts[i] < 2;
-    if (!valid) {
-      Serial.print(i);
-      Serial.print(" ");
-      Serial.print(counts[i]);
-    }
-  }
-
-  Serial.print("Grid Valid: ");
-  Serial.println(valid);
-  return valid;
-}
-
-bool isCellValid(byte gX, byte gY, byte x, byte y) {
-  byte value = sudoku[toArrayIndex(gX, gY, x, y)].value;
-  if (value == 0) {
-    return true;
-  } else {
-    byte cellX = (gX * 3 + x);
-    byte cellY = (gY * 3 + y);
-    bool valid = true; 
-    for (byte i = 0; i < 9 && valid; i++) {
-      if (getCellValue(cellX, i) == value && i != cellY) {
-        valid = false;
-        highlightCell(cellX, i);
-      }
-    }
-    for (byte i = 0; i < 9 && valid; i++) {
-      if (getCellValue(i, cellY) == value and i != cellX) {
-        valid = false;
-        highlightCell(i, cellY);
-      }
-    }
-    if (!valid) {
-      Serial.println("??");
-    }
-    return valid;
-  }
-}
-
 void highlightCell(byte x, byte y) {
   byte side = tft.height();
   byte cellX = (x * side/9);
@@ -226,4 +155,3 @@ void drawString(String s, byte x, byte y, byte size, unsigned int color) {
   tft.setTextSize(size);
   tft.print(s);
 }
-
