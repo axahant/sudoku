@@ -11,9 +11,18 @@ bool dirty = true;
 // 1 - Sudoku Screen
 byte screenIndex = 0;
 
+byte beginnerSudoku[] = { 0, 5, 7, 3, 9, 8, 2, 0, 6,
+                        6, 3, 9, 7, 2, 1, 5, 8, 4, 
+                        8, 1, 0, 0, 4, 5, 7, 9, 3, 
+                        7, 2, 9, 6, 4, 3, 5, 8, 1, 
+                        1, 6, 5, 8, 0, 2, 3, 4, 7, 
+                        3, 8, 4, 1, 5, 7, 9, 2, 6, 
+                        8, 3, 2, 1, 6, 0, 0, 7, 5, 
+                        9, 5, 6, 2, 7, 8, 4, 1, 3, 
+                        4, 0, 1, 5, 3, 9, 2, 6, 0 };
+
 struct Cell {
   byte value = 0;
-  byte triedValues[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 };
 
 Cell sudoku[81];
@@ -71,23 +80,24 @@ void emptySudoku() {
   for (byte z = 0; z < 9; z++) {
     for (byte x = 0; x < 3; x++) {
       for (byte y = 0; y < 3; y++) {
-        setCellValue(z, x, y, 1);
+        setCellValue(z, x, y, 0);
       }
     }
   }
 }
 
+void copySudoku(byte *v) {
+  for (byte i = 0; i < 81; i++) {
+    byte z = i / 9;
+    byte x = (i % 9) / 3;
+    byte y = (i % 9) % 3;
+    setCellValue(z, x, y, v[i]);
+  }
+}
+
 void initSudoku() {
-  emptySudoku();
-}
-
-Cell getCell(byte x, byte y) {
-  byte index = x * 9 + y;
-  return sudoku[index];
-}
-
-byte getCellValue(byte x, byte y) {
-  return getCell(x, y).value;
+  //emptySudoku();
+  copySudoku(beginnerSudoku);
 }
 
 void setCellValue(byte z, byte x, byte y, byte number) {
@@ -97,10 +107,10 @@ void setCellValue(byte z, byte x, byte y, byte number) {
 }
 
 void showSudoku() {
-  for(byte n = 0; n < 81; n++) {
-    byte z = n / 9;
-    byte x = (n % 9) % 3;
-    byte y = (n % 9) / 3;
+  for (byte i = 0; i < 81; i++) {
+    byte z = i / 9;
+    byte x = (i % 9) / 3;
+    byte y = (i % 9) % 3;
     showCell(z, x, y, WHITE);
   }
 }
@@ -108,17 +118,17 @@ void showSudoku() {
 void showCell(byte z, byte x, byte y, int color) {
   byte side = tft.height();
   byte arrayIndex = toArrayIndex(z, x, y);
-  byte cellX = (((z % 3) * 3 + x) * side/9);
-  byte cellY = (((z / 3) * 3 + y) * side/9); 
+  byte cellX = (((z / 3) * 3 + x) * side/9);
+  byte cellY = (((z % 3) * 3 + y) * side/9); 
   tft.fillRect(cellX + 1, cellY + 1, side/9 - 2, side/9 - 2, BLUE);
   tft.setCursor(cellX + 1, cellY + 1);
   tft.setTextSize(1);
   tft.setTextColor(BLACK);
-  tft.print(x);
-  tft.print(",");
-  tft.print(y);
-  tft.setCursor(cellX + 1, cellY + side/9 - 8);
-  tft.print(toArrayIndex(z, x, y));
+  // tft.print(x);
+  // tft.print(",");
+  // tft.print(y);
+  // tft.setCursor(cellX + 1, cellY + side/9 - 8);
+  // tft.print(toArrayIndex(z, x, y));
   if (sudoku[arrayIndex].value != 0) {
     tft.setCursor(cellX + 12, cellY + 10);
     tft.setTextColor(color);
@@ -132,8 +142,8 @@ byte toArrayIndex(byte z, byte x, byte y) {
 
 void highlightCell(byte z, byte x, byte y) {
   byte side = tft.height();
-  byte cellX = (((z % 3) * 3 + x) * side/9);
-  byte cellY = (((z / 3) * 3 + x) * side/9); 
+  byte cellX = (((z / 3) * 3 + x) * side/9);
+  byte cellY = (((z % 3) * 3 + x) * side/9); 
   tft.drawRect(cellX, cellY, side/9, side/9, RED);
 }
 
