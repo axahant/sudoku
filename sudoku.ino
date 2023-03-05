@@ -68,9 +68,11 @@ void drawSudokuScreen() {
 }
 
 void emptySudoku() {
-  for (byte x = 0; x < 9; x++) {
-    for (byte y = 0; y < 9; y++) {
-      setCellValue(x, y, 1);
+  for (byte z = 0; z < 9; z++) {
+    for (byte x = 0; x < 3; x++) {
+      for (byte y = 0; y < 3; y++) {
+        setCellValue(z, x, y, 1);
+      }
     }
   }
 }
@@ -88,33 +90,26 @@ byte getCellValue(byte x, byte y) {
   return getCell(x, y).value;
 }
 
-void setCellValue(byte x, byte y, byte number) {
-  byte index = x * 9 + y;
+void setCellValue(byte z, byte x, byte y, byte number) {
+  byte index = toArrayIndex(z, x, y);
   sudoku[index].value = number;
-  if (number == 0) {
-    for (byte i = 0; i < 9; i++) {
-      sudoku[index].triedValues[i] = 0;
-    }
-  } else {
-    byte idx = 0;
-    sudoku[index].triedValues[number - 1] = number;
-  }
-  showCell(x, y, WHITE); 
+  showCell(z, x, y, WHITE); 
 }
 
 void showSudoku() {
   for(byte n = 0; n < 81; n++) {
-    byte x = n / 9;
-    byte y = n % 9;
-    showCell(x, y, WHITE);
+    byte z = n / 9;
+    byte x = (n % 9) % 3;
+    byte y = (n % 9) / 3;
+    showCell(z, x, y, WHITE);
   }
 }
 
-void showCell(byte x, byte y, int color) {
+void showCell(byte z, byte x, byte y, int color) {
   byte side = tft.height();
-  byte arrayIndex = toArrayIndex(x, y);
-  byte cellX = (x * side/9);
-  byte cellY = (y * side/9); 
+  byte arrayIndex = toArrayIndex(z, x, y);
+  byte cellX = (((z % 3) * 3 + x) * side/9);
+  byte cellY = (((z / 3) * 3 + y) * side/9); 
   tft.fillRect(cellX + 1, cellY + 1, side/9 - 2, side/9 - 2, BLUE);
   tft.setCursor(cellX + 1, cellY + 1);
   tft.setTextSize(1);
@@ -123,7 +118,7 @@ void showCell(byte x, byte y, int color) {
   tft.print(",");
   tft.print(y);
   tft.setCursor(cellX + 1, cellY + side/9 - 8);
-  tft.print(toArrayIndex(x, y));
+  tft.print(toArrayIndex(z, x, y));
   if (sudoku[arrayIndex].value != 0) {
     tft.setCursor(cellX + 12, cellY + 10);
     tft.setTextColor(color);
@@ -131,21 +126,14 @@ void showCell(byte x, byte y, int color) {
   }
 }
 
-byte toArrayIndex(byte x, byte y) {
-  return x * 9 + y;
+byte toArrayIndex(byte z, byte x, byte y) {
+  return x * 3 + y + (z * 9);
 }
 
-byte toArrayIndex(byte gX, byte gY, byte x, byte y) {
-  byte cellX = (gX * 3 + x);
-  byte cellY = (gY * 3 + y);
-  byte arrayIndex = cellX * 9 + cellY;
-  return arrayIndex;
-}
-
-void highlightCell(byte x, byte y) {
+void highlightCell(byte z, byte x, byte y) {
   byte side = tft.height();
-  byte cellX = (x * side/9);
-  byte cellY = (y * side/9); 
+  byte cellX = (((z % 3) * 3 + x) * side/9);
+  byte cellY = (((z / 3) * 3 + x) * side/9); 
   tft.drawRect(cellX, cellY, side/9, side/9, RED);
 }
 
