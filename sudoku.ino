@@ -21,11 +21,44 @@ byte beginnerSudoku[] = { 0, 3, 2, 5, 9, 0, 7, 8, 6,
                           3, 1, 9, 8, 5, 2, 4, 7, 6,
                           4, 5, 2, 0, 3, 6, 1, 9, 0 };
 
+byte intermediateSudoku[] = { 5, 0, 6, 0, 0, 8, 0, 0, 0,
+                              3, 8, 2, 0, 4, 6, 5, 7, 9,
+                              0, 0, 1, 0, 0, 0, 0, 0, 4,
+                              3, 0, 0, 0, 0, 0, 2, 6, 5,
+                              2, 0, 8, 9, 0, 5, 7, 0, 4,
+                              6, 5, 7, 0, 0, 0, 0, 0, 9,
+                              6, 0, 0, 0, 0, 0, 7, 0, 0,
+                              4, 2, 7, 8, 5, 0, 6, 9, 3,
+                              0, 0, 0, 2, 0, 0, 4, 0, 8 };
+
+byte advancedSudoku[] = { 0, 5, 6, 0, 0, 0, 9, 7, 0,
+                          0, 0, 0, 0, 7, 0, 0, 0, 0,
+                          4, 7, 0, 0, 0, 0, 0, 8, 3,
+                          6, 0, 0, 5, 2, 7, 3, 0, 0,
+                          2, 5, 8, 4, 0, 3, 6, 9, 7,
+                          0, 0, 7, 8, 6, 9, 0, 0, 5,
+                          1, 9, 0, 0, 0, 0, 0, 6, 3,
+                          0, 0, 0, 0, 3, 0, 0, 0, 0,
+                          0, 5, 8, 0, 0, 0, 0, 9, 0 };
+
+byte aceSudoku[] = { 6, 0, 0, 0, 0, 0, 8, 0, 0,
+                     5, 7, 0, 0, 6, 4, 0, 2, 1,
+                     0, 1, 0, 8, 2, 0, 3, 0, 0,
+                     0, 2, 0, 3, 0, 0, 0, 0, 0,
+                     0, 3, 7, 0, 0, 0, 4, 8, 0,
+                     0, 0, 0, 0, 0, 6, 0, 3, 0,
+                     0, 0, 9, 0, 8, 7, 0, 5, 0,
+                     7, 4, 0, 1, 5, 0, 0, 9, 6,
+                     0, 0, 2, 0, 0, 0, 0, 0, 1 };
+
 struct Cell {
   byte value = 0;
+  bool editable = true; 
 };
 
 Cell sudoku[81];
+
+byte solvingCellIndex = 0;
 
 void setup(void) {
   Serial.begin(9600);
@@ -46,6 +79,40 @@ void loop() {
     }
 
     dirty = false;
+  } else if (screenIndex == 1 && solvingCellIndex >=0 && solvingCellIndex < 81) {
+    byte z = solvingCellIndex / 9;
+    byte x = (solvingCellIndex % 9) / 3;
+    byte y = (solvingCellIndex % 9) % 3;
+
+    if (!isCellEditable(z, x, y)) {
+      solvingCellIndex++;
+    } else {
+      byte cellValue = getCellValue(z, x, y);
+
+      if (cellValue == 0 || (!isCellValid(z, x, y) && cellValue < 9)) {
+        setCellValue(z, x, y, cellValue + 1, true);
+
+        if (isCellValid(z, x, y)) {
+          solvingCellIndex++;
+        }        
+      } else {
+        setCellValue(z, x, y, 0, true);
+        do {
+          solvingCellIndex--;
+          z = solvingCellIndex / 9;
+          x = (solvingCellIndex % 9) / 3;
+          y = (solvingCellIndex % 9) % 3;
+        } while (!isCellEditable(z, x, y) && solvingCellIndex > 0);
+        
+        cellValue = getCellValue(z, x, y);
+        if (solvingCellIndex >= 0 && cellValue < 9) { 
+          setCellValue(z, x, y, cellValue + 1, true);
+          if (isCellValid(z, x, y)) {
+            solvingCellIndex++;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -76,11 +143,16 @@ void drawSudokuScreen() {
   initSudoku();
 }
 
+void initSudoku() {
+  //emptySudoku();
+  copySudoku(aceSudoku);
+}
+
 void emptySudoku() {
   for (byte z = 0; z < 9; z++) {
     for (byte x = 0; x < 3; x++) {
       for (byte y = 0; y < 3; y++) {
-        setCellValue(z, x, y, 0);
+        setCellValue(z, x, y, 0, true);
       }
     }
   }
@@ -91,19 +163,15 @@ void copySudoku(byte *v) {
     byte z = i / 9;
     byte x = (i % 9) / 3;
     byte y = (i % 9) % 3;
-    setCellValue(z, x, y, v[i]);
+    setCellValue(z, x, y, v[i], v[i] == 0);
   }
 }
 
-void initSudoku() {
-  //emptySudoku();
-  copySudoku(beginnerSudoku);
-}
-
-void setCellValue(byte z, byte x, byte y, byte number) {
+void setCellValue(byte z, byte x, byte y, byte number, bool editable) {
   byte index = toArrayIndex(z, x, y);
   sudoku[index].value = number;
-  showCell(z, x, y, WHITE); 
+  sudoku[index].editable = editable;
+  showCell(z, x, y); 
 }
 
 byte getCellValue(byte z, byte x, byte y) {
@@ -111,16 +179,21 @@ byte getCellValue(byte z, byte x, byte y) {
   return sudoku[index].value;
 }
 
+bool isCellEditable(byte z, byte x, byte y) {
+  byte index = toArrayIndex(z, x, y);
+  return sudoku[index].editable;
+}
+
 void showSudoku() {
   for (byte i = 0; i < 81; i++) {
     byte z = i / 9;
     byte x = (i % 9) / 3;
     byte y = (i % 9) % 3;
-    showCell(z, x, y, WHITE);
+    showCell(z, x, y);
   }
 }
 
-void showCell(byte z, byte x, byte y, int color) {
+void showCell(byte z, byte x, byte y) {
   byte side = tft.height();
   byte arrayIndex = toArrayIndex(z, x, y);
   byte cellX = (((z % 3) * 3 + y) * side/9);
@@ -129,15 +202,33 @@ void showCell(byte z, byte x, byte y, int color) {
   tft.setCursor(cellX + 1, cellY + 1);
   tft.setTextSize(1);
   tft.setTextColor(BLACK);
-  tft.print(x);
-  tft.print(",");
-  tft.print(y);
+  // tft.print(x);
+  // tft.print(",");
+  // tft.print(y);
   // tft.setCursor(cellX + 1, cellY + side/9 - 8);
   // tft.print(toArrayIndex(z, x, y));
   if (sudoku[arrayIndex].value != 0) {
     tft.setCursor(cellX + 12, cellY + 10);
-    tft.setTextColor(color);
+
+    if (isCellValid(z, x, y)) {
+      if (sudoku[arrayIndex].editable) {
+        tft.setTextColor(WHITE);
+      } else {
+        tft.setTextColor(BLACK);
+      }
+    } else {
+      tft.setTextColor(RED);
+    }
+
     tft.print(sudoku[arrayIndex].value);
+  }
+}
+
+bool isCellValid(byte z, byte x, byte y) {
+  if (getCellValue(z, x, y) > 0 && isCellEditable(z, x, y)) {
+    return isGridValid(z) & isColumnValid(z, y) & isRowValid(z, x);
+  } else {
+    return true;
   }
 }
 
