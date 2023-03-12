@@ -10,6 +10,9 @@ bool dirty = true;
 // 0 - Welcome Screen
 // 1 - Sudoku Screen
 byte screenIndex = 0;
+// 0 - Brute Force
+// 1 - Heuristic
+byte mode = 0;
 
 byte beginnerSudoku[] = { 0, 3, 2, 5, 9, 0, 7, 8, 6,
                           7, 6, 5, 2, 4, 8, 9, 3, 1,
@@ -51,6 +54,16 @@ byte aceSudoku[] = { 6, 0, 0, 0, 0, 0, 8, 0, 0,
                      7, 4, 0, 1, 5, 0, 0, 9, 6,
                      0, 0, 2, 0, 0, 0, 0, 0, 1 };
 
+byte evilSudoku[] = { 0, 9, 0, 0, 0, 2, 4, 0, 0,
+                      7, 0, 0, 0, 0, 0, 0, 5, 9,
+                      0, 0, 0, 3, 0, 0, 0, 1, 0,
+                      0, 0, 0, 0, 3, 0, 6, 0, 0,
+                      4, 0, 0, 0, 7, 6, 8, 0, 0,
+                      0, 7, 0, 1, 0, 0, 0, 0, 0,
+                      9, 0, 0, 0, 0, 0, 0, 4, 0,
+                      0, 6, 1, 0, 0, 8, 0, 0, 0,
+                      0, 5, 0, 0, 0, 0, 0, 0, 9 };
+
 struct Cell {
   byte value = 0;
   bool editable = true; 
@@ -59,6 +72,8 @@ struct Cell {
 Cell sudoku[81];
 
 byte solvingCellIndex = 0;
+unsigned long startTime = 0;
+unsigned long endTime = 0;
 
 void setup(void) {
   Serial.begin(9600);
@@ -79,7 +94,7 @@ void loop() {
     }
 
     dirty = false;
-  } else if (screenIndex == 1 && solvingCellIndex >=0 && solvingCellIndex < 81) {
+  } else if (screenIndex == 1 && solvingCellIndex >= 0 && solvingCellIndex <= 80) {
     byte z = solvingCellIndex / 9;
     byte x = (solvingCellIndex % 9) / 3;
     byte y = (solvingCellIndex % 9) % 3;
@@ -89,14 +104,17 @@ void loop() {
     } else {
       byte cellValue = getCellValue(z, x, y);
 
-      if (cellValue == 0 || (!isCellValid(z, x, y) && cellValue < 9)) {
-        setCellValue(z, x, y, cellValue + 1, true);
+      byte nextPossibleNumber = getNextPossibleGridValue(z, cellValue);
+
+      if (cellValue == 0 || (!isCellValid(z, x, y) && nextPossibleNumber > 0)) {
+        setCellValue(z, x, y, nextPossibleNumber, true);
 
         if (isCellValid(z, x, y)) {
           solvingCellIndex++;
         }        
       } else {
         setCellValue(z, x, y, 0, true);
+
         do {
           solvingCellIndex--;
           z = solvingCellIndex / 9;
@@ -105,14 +123,21 @@ void loop() {
         } while (!isCellEditable(z, x, y) && solvingCellIndex > 0);
         
         cellValue = getCellValue(z, x, y);
-        if (solvingCellIndex >= 0 && cellValue < 9) { 
-          setCellValue(z, x, y, cellValue + 1, true);
+        byte nextPossibleNumber = getNextPossibleGridValue(z, cellValue);
+        if (solvingCellIndex >= 0 && nextPossibleNumber > 0) { 
+          setCellValue(z, x, y, nextPossibleNumber, true);
           if (isCellValid(z, x, y)) {
             solvingCellIndex++;
           }
         }
       }
     }
+  } else if (solvingCellIndex == 81 && endTime == 0) {
+    endTime = millis();
+    unsigned long timeTaken = endTime - startTime;
+    Serial.print("Took: ");
+    Serial.print(timeTaken); 
+    Serial.println("ms");
   }
 }
 
@@ -145,7 +170,8 @@ void drawSudokuScreen() {
 
 void initSudoku() {
   //emptySudoku();
-  copySudoku(aceSudoku);
+  copySudoku(evilSudoku);
+  startTime = millis();
 }
 
 void emptySudoku() {
@@ -155,6 +181,37 @@ void emptySudoku() {
         setCellValue(z, x, y, 0, true);
       }
     }
+  }
+}
+
+byte getNextPossibleGridValue(byte z, byte currentValue) {
+  if (mode == 0) {
+    if (currentValue < 9) {
+      return currentValue + 1;
+    } else {
+      return 0;
+    }
+  } else if (mode == 1) {
+    byte valuesInGrid[9] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    for (byte x = 0; x < 3; x++) {
+      for (byte y = 0; y < 3; y++) {
+        byte cellValue = getCellValue(z, x, y);
+        if (cellValue > 0) {
+          valuesInGrid[cellValue - 1] = 0;
+        }
+      }
+    }
+
+    byte nextNumber = 0;
+    for (byte i = 0; i < 9 && nextNumber == 0; i++) {
+      if (valuesInGrid[i] > 0 && valuesInGrid[i] > currentValue) {
+        nextNumber = valuesInGrid[i];
+      }
+    }
+
+    return nextNumber;
+  } else {
+    return 0;
   }
 }
 
