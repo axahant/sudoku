@@ -3,66 +3,23 @@
 
 #include "tft.h"
 #include "colors.h"
+#include "sudoku.h"
 
 static TouchScreen ts(XP, YP, XM, YM, 300);
 static Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 bool dirty = true;
+
 // 0 - Welcome Screen
 // 1 - Sudoku Screen
 byte screenIndex = 0;
+
 // 0 - Brute Force
 // 1 - Heuristic
-byte mode = 0;
+byte mode = 1;
 
-byte beginnerSudoku[] = { 0, 3, 2, 5, 9, 0, 7, 8, 6,
-                          7, 6, 5, 2, 4, 8, 9, 3, 1,
-                          8, 1, 0, 3, 6, 7, 2, 0, 5,
-                          6, 7, 5, 3, 2, 8, 9, 1, 4,
-                          1, 8, 3, 6, 0, 4, 5, 2, 7,
-                          9, 2, 4, 5, 7, 1, 6, 8, 3,
-                          8, 0, 7, 1, 4, 9, 0, 5, 3,
-                          3, 1, 9, 8, 5, 2, 4, 7, 6,
-                          4, 5, 2, 0, 3, 6, 1, 9, 0 };
+byte *sudokuPuzzle = advancedSudoku;
 
-byte intermediateSudoku[] = { 5, 0, 6, 0, 0, 8, 0, 0, 0,
-                              3, 8, 2, 0, 4, 6, 5, 7, 9,
-                              0, 0, 1, 0, 0, 0, 0, 0, 4,
-                              3, 0, 0, 0, 0, 0, 2, 6, 5,
-                              2, 0, 8, 9, 0, 5, 7, 0, 4,
-                              6, 5, 7, 0, 0, 0, 0, 0, 9,
-                              6, 0, 0, 0, 0, 0, 7, 0, 0,
-                              4, 2, 7, 8, 5, 0, 6, 9, 3,
-                              0, 0, 0, 2, 0, 0, 4, 0, 8 };
-
-byte advancedSudoku[] = { 0, 5, 6, 0, 0, 0, 9, 7, 0,
-                          0, 0, 0, 0, 7, 0, 0, 0, 0,
-                          4, 7, 0, 0, 0, 0, 0, 8, 3,
-                          6, 0, 0, 5, 2, 7, 3, 0, 0,
-                          2, 5, 8, 4, 0, 3, 6, 9, 7,
-                          0, 0, 7, 8, 6, 9, 0, 0, 5,
-                          1, 9, 0, 0, 0, 0, 0, 6, 3,
-                          0, 0, 0, 0, 3, 0, 0, 0, 0,
-                          0, 5, 8, 0, 0, 0, 0, 9, 0 };
-
-byte aceSudoku[] = { 6, 0, 0, 0, 0, 0, 8, 0, 0,
-                     5, 7, 0, 0, 6, 4, 0, 2, 1,
-                     0, 1, 0, 8, 2, 0, 3, 0, 0,
-                     0, 2, 0, 3, 0, 0, 0, 0, 0,
-                     0, 3, 7, 0, 0, 0, 4, 8, 0,
-                     0, 0, 0, 0, 0, 6, 0, 3, 0,
-                     0, 0, 9, 0, 8, 7, 0, 5, 0,
-                     7, 4, 0, 1, 5, 0, 0, 9, 6,
-                     0, 0, 2, 0, 0, 0, 0, 0, 1 };
-
-byte evilSudoku[] = { 0, 9, 0, 0, 0, 2, 4, 0, 0,
-                      7, 0, 0, 0, 0, 0, 0, 5, 9,
-                      0, 0, 0, 3, 0, 0, 0, 1, 0,
-                      0, 0, 0, 0, 3, 0, 6, 0, 0,
-                      4, 0, 0, 0, 7, 6, 8, 0, 0,
-                      0, 7, 0, 1, 0, 0, 0, 0, 0,
-                      9, 0, 0, 0, 0, 0, 0, 4, 0,
-                      0, 6, 1, 0, 0, 8, 0, 0, 0,
-                      0, 5, 0, 0, 0, 0, 0, 0, 9 };
+unsigned long retryDelay = 100;
 
 struct Cell {
   byte value = 0;
@@ -131,6 +88,7 @@ void loop() {
           }
         }
       }
+      delay(retryDelay);
     }
   } else if (solvingCellIndex == 81 && endTime == 0) {
     endTime = millis();
@@ -148,7 +106,7 @@ void drawWelcomeScreen() {
   drawString(F("Extended Project"), 65, 135, 2, YELLOW);
   drawString(F("Axahant Dubey"), 85, 175, 2, WHITE);
   drawString(F("Year 7 Hawks"), 90, 195, 2, GREEN);
-  delay(2000);
+  delay(5000);
   screenIndex = 1;
   dirty = true; 
 }
@@ -170,7 +128,7 @@ void drawSudokuScreen() {
 
 void initSudoku() {
   //emptySudoku();
-  copySudoku(evilSudoku);
+  copySudoku(sudokuPuzzle);
   startTime = millis();
 }
 
@@ -271,7 +229,7 @@ void showCell(byte z, byte x, byte y) {
       if (sudoku[arrayIndex].editable) {
         tft.setTextColor(WHITE);
       } else {
-        tft.setTextColor(BLACK);
+        tft.setTextColor(MAROON);
       }
     } else {
       tft.setTextColor(RED);
