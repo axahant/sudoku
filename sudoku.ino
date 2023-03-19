@@ -1,11 +1,9 @@
-#include <TouchScreen.h>
 #include <Elegoo_TFTLCD.h>
 
 #include "tft.h"
 #include "colors.h"
 #include "sudoku.h"
 
-static TouchScreen ts(XP, YP, XM, YM, 300);
 static Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 bool dirty = true;
 
